@@ -7,14 +7,20 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://cdn.jsdelivr.net/npm/three@0.175.0/build/three.module.js",
-                "jsm/": "https://cdn.jsdelivr.net/npm/three@0.175.0/examples/jsm/"
-            }
-        }
-    </script>
+    <main class="UI">
+        <div class="movement-navigation">
+            <button type="button" class="movement-button" data-move="right" title="Move Right"></button>
+            <button type="button" class="movement-button" data-move="left" title="MoveLeft"></button>
+        </div>
+    </main>
 </body>
 </html>
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.175.0/build/three.module.js",
+        "jsm/": "https://cdn.jsdelivr.net/npm/three@0.175.0/examples/jsm/"
+    }
+}
+</script>
 <script src="script.js" type="module"></script>

@@ -1,13 +1,13 @@
 import * as THREE from "three"
-
 import { OrbitControls } from "jsm/controls/OrbitControls.js"
-
 import { Sky } from "jsm/Addons.js";
 
 let w = window.innerWidth
 let h = window.innerHeight
 
 const renderer = new THREE.WebGLRenderer({ antialias: true})
+renderer.shadowMap.enabled = true
+renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
 renderer.setSize(w, h)
 document.body.appendChild(renderer.domElement)
@@ -24,7 +24,7 @@ camera.position.y = 1
 const scene = new THREE.Scene()
 
 const sky = new Sky()
-sky.scale.setScalar( 450000 )
+sky.scale.setScalar(450000)
 
 const phi = THREE.MathUtils.degToRad(90)
 const theta = THREE.MathUtils.degToRad(180)
@@ -38,11 +38,23 @@ const controls = new OrbitControls(camera, renderer.domElement)
 controls.enableDamping = true
 controls.dampingFactor = .03
 
-renderer.render(scene, camera)
+const light = new THREE.DirectionalLight(0xffffff, 5)
+light.position.set(1, 1, 1)
+light.castShadow = true
+scene.add(light)
+
+light.shadow.mapSize.width = 512 * 5
+light.shadow.mapSize.height = 512 * 5
+light.shadow.camera.near = .1
+light.shadow.camera.far = 500
+
+const light2 = new THREE.DirectionalLight(0xffffff, 3)
+light2.position.set(-1, 1, 1)
+scene.add(light2)
 
 const planeGeometry = new THREE.PlaneGeometry(1, 1)
-const planeMaterial = new THREE.MeshBasicMaterial({
-    color: 0xffff00,
+const planeMaterial = new THREE.MeshStandardMaterial({
+    color: 0xde9547,
     side: THREE.DoubleSide
 })
 
@@ -51,21 +63,35 @@ plane.position.z = -3
 plane.scale.x = 2
 plane.scale.y = 15
 plane.rotation.x = Math.PI / 2
+plane.castShadow = false
+plane.receiveShadow = true
 scene.add(plane)
 
 const boxGeometry = new THREE.BoxGeometry(.25, .25, .25)
-const boxMaterial = new THREE.MeshBasicMaterial({
+const boxMaterial = new THREE.MeshStandardMaterial({
     color: 0xffffff,
     side: THREE.DoubleSide
 })
 
 const box = new THREE.Mesh(boxGeometry, boxMaterial)
+box.castShadow = true
+box.receiveShadow = false
 box.position.y = .125
 box.position.z = 1
 scene.add(box)
 
-const light = new THREE.AmbientLight(0x404040)
-scene.add(light)
+const edges = new THREE.EdgesGeometry(boxGeometry)
+const edgeMaterial = new THREE.LineBasicMaterial({
+    color: 0x000000
+})
+const edgeLines = new THREE.LineSegments(edges, edgeMaterial)
+edgeLines.position.copy(box.position)
+scene.add(edgeLines)
+
+const boxGroup = new THREE.Group()
+boxGroup.add(box)
+boxGroup.add(edgeLines)
+scene.add(boxGroup)
 
 function update(d = 0) {
 
@@ -86,3 +112,48 @@ window.addEventListener("resize", ()=> {
     camera.updateProjectionMatrix()
     
 })
+
+var holdInterval
+
+function whileHolding(e) {
+
+    let side = e.target.dataset.move
+
+    if (side == "right") {
+
+        if (boxGroup.position.x <= -.87) return
+        boxGroup.position.x -= .02
+
+    }
+    else if (side == "left") {
+
+        if (boxGroup.position.x >= .87) return
+        boxGroup.position.x += .02
+
+    }
+    
+}
+
+function startHold(e) {
+
+    e.preventDefault()
+
+    if (holdInterval) return
+    holdInterval = setInterval(() => whileHolding(e), 10)
+
+}
+
+function endHold() {
+
+    clearInterval(holdInterval)
+    holdInterval = null
+
+}
+
+document.addEventListener("mousedown", startHold)
+document.addEventListener("mouseup", endHold)
+
+document.addEventListener("touchstart", startHold, {
+    passive: false
+})
+document.addEventListener("touchend", endHold)
