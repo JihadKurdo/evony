@@ -5,21 +5,10 @@ import { Sky } from "jsm/Addons.js";
 let w = window.innerWidth
 let h = window.innerHeight
 
-function isSafariBrowser() {
-  return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-}
-
-let powerPreference = "default";
-
-if (isSafariBrowser()) {
-  powerPreference = "high-performance";
-}
-
 const renderer = new THREE.WebGLRenderer({
-  antialias: true,
-  powerPreference: powerPreference
+  antialias: true
 });
-
+renderer.setPixelRatio(window.devicePixelRatio);
 renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
@@ -122,6 +111,7 @@ window.addEventListener("resize", ()=> {
     const h = window.innerHeight
 
     renderer.setSize(w, h)
+    renderer.setPixelRatio(window.devicePixelRatio);
     camera.aspect = w / h
     camera.updateProjectionMatrix()
     
