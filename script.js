@@ -5,7 +5,10 @@ import { Sky } from "jsm/Addons.js";
 let w = window.innerWidth
 let h = window.innerHeight
 
-const renderer = new THREE.WebGLRenderer({ antialias: true})
+const renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    powerPreference: "high-performance"
+})
 renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
