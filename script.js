@@ -5,10 +5,21 @@ import { Sky } from "jsm/Addons.js";
 let w = window.innerWidth
 let h = window.innerHeight
 
+function isSafariBrowser() {
+  return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+}
+
+let powerPreference = "default";
+
+if (isSafariBrowser()) {
+  powerPreference = "high-performance";
+}
+
 const renderer = new THREE.WebGLRenderer({
-    antialias: true,
-    powerPreference: "high-performance"
-})
+  antialias: true,
+  powerPreference: powerPreference
+});
+
 renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
