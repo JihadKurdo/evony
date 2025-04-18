@@ -96,27 +96,6 @@ boxGroup.add(box)
 boxGroup.add(edgeLines)
 scene.add(boxGroup)
 
-function update(d = 0) {
-
-    requestAnimationFrame(update)
-    renderer.render(scene, camera)
-    controls.update()
-
-}
-update()
-
-window.addEventListener("resize", ()=> {
-
-    const w = window.innerWidth
-    const h = window.innerHeight
-
-    renderer.setSize(w, h)
-    renderer.setPixelRatio(window.devicePixelRatio);
-    camera.aspect = w / h
-    camera.updateProjectionMatrix()
-    
-})
-
 var holdInterval
 
 function whileHolding(e) {
@@ -161,3 +140,24 @@ document.addEventListener("touchstart", startHold, {
     passive: false
 })
 document.addEventListener("touchend", endHold)
+
+function update(d = 0) {
+
+    requestAnimationFrame(update)
+    renderer.render(scene, camera)
+    controls.update()
+
+}
+update()
+
+window.addEventListener("resize", ()=> {
+
+    const w = window.innerWidth
+    const h = window.innerHeight
+
+    renderer.setSize(w, h)
+    renderer.setPixelRatio(window.devicePixelRatio);
+    camera.aspect = w / h
+    camera.updateProjectionMatrix()
+    
+})
